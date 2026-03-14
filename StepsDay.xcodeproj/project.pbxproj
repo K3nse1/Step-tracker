@@ -460,6 +460,7 @@
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = StepsWidget/Info.plist;
 				INFOPLIST_KEY_CFBundleDisplayName = StepsWidget;
+				INFOPLIST_KEY_NSHealthShareUsageDescription = "sta app necesita acceder a tus pasos diarios para mostrarlos en el widget.";
 				INFOPLIST_KEY_NSHumanReadableCopyright = "";
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
@@ -491,6 +492,7 @@
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = StepsWidget/Info.plist;
 				INFOPLIST_KEY_CFBundleDisplayName = StepsWidget;
+				INFOPLIST_KEY_NSHealthShareUsageDescription = "sta app necesita acceder a tus pasos diarios para mostrarlos en el widget.";
 				INFOPLIST_KEY_NSHumanReadableCopyright = "";
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",

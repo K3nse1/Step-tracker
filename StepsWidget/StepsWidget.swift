@@ -35,13 +35,16 @@ struct Provider: TimelineProvider {
     private func fetchSteps(completion: @escaping (Double) -> Void) {
         let defaults = UserDefaults(suiteName: "group.com.rsantosg.stepsday")
         let cached = defaults?.double(forKey: "todaySteps") ?? 0
+        print("🔵 Widget leyendo App Group: \(cached)")
         
         HealthKitManager.shared.requestAuthorization { success in
+            print(success ? "🔵 Widget autorización OK" : "🔴 Widget sin autorización")
             guard success else {
                 completion(cached)
                 return
             }
             HealthKitManager.shared.fetchTodaySteps { steps in
+                print("🔵 Widget pasos de HealthKit: \(steps)")
                 completion(steps)
             }
         }
