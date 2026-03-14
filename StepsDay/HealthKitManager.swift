@@ -12,21 +12,22 @@ class HealthKitManager {
     
     static let shared = HealthKitManager()
     private let healthStore = HKHealthStore()
+    private let appGroupID = "group.com.rsantosg.stepsday"
     
-    // Pide permiso al usuario para leer los pasos
     func requestAuthorization(completion: @escaping (Bool) -> Void) {
         guard HKHealthStore.isHealthDataAvailable() else {
+            print("❌ HealthKit no disponible")
             completion(false)
             return
         }
         
         let stepType = HKQuantityType(.stepCount)
-        healthStore.requestAuthorization(toShare: [], read: [stepType]) { success, _ in
+        healthStore.requestAuthorization(toShare: [], read: [stepType]) { success, error in
+            print(success ? "✅ Autorización concedida" : "❌ Autorización denegada: \(String(describing: error))")
             completion(success)
         }
     }
     
-    // Lee los pasos de hoy
     func fetchTodaySteps(completion: @escaping (Double) -> Void) {
         let stepType = HKQuantityType(.stepCount)
         
@@ -43,6 +44,15 @@ class HealthKitManager {
             options: .cumulativeSum
         ) { _, result, _ in
             let steps = result?.sumQuantity()?.doubleValue(for: .count()) ?? 0
+            print("✅ Pasos obtenidos: \(steps)")
+            
+            let defaults = UserDefaults(suiteName: self.appGroupID)
+            defaults?.set(steps, forKey: "todaySteps")
+            defaults?.synchronize()
+            
+            let verificacion = defaults?.double(forKey: "todaySteps") ?? -1
+            print("✅ Verificación App Group: \(verificacion)")
+            
             completion(steps)
         }
         

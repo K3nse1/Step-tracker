@@ -6,6 +6,7 @@
 //
 
 import SwiftUI
+import WidgetKit
 
 struct ContentView: View {
     @State private var steps: Double = 0
@@ -30,6 +31,7 @@ struct ContentView: View {
                 HealthKitManager.shared.fetchTodaySteps { count in
                     DispatchQueue.main.async {
                         steps = count
+                        WidgetCenter.shared.reloadAllTimelines()
                     }
                 }
             }

@@ -26,7 +26,6 @@ struct Provider: TimelineProvider {
     func getTimeline(in context: Context, completion: @escaping (Timeline<StepsEntry>) -> Void) {
         fetchSteps { steps in
             let entry = StepsEntry(date: Date(), steps: steps)
-            // El sistema actualizará el widget cada 15 minutos
             let nextUpdate = Calendar.current.date(byAdding: .minute, value: 15, to: Date())!
             let timeline = Timeline(entries: [entry], policy: .after(nextUpdate))
             completion(timeline)
@@ -34,9 +33,12 @@ struct Provider: TimelineProvider {
     }
     
     private func fetchSteps(completion: @escaping (Double) -> Void) {
+        let defaults = UserDefaults(suiteName: "group.com.rsantosg.stepsday")
+        let cached = defaults?.double(forKey: "todaySteps") ?? 0
+        
         HealthKitManager.shared.requestAuthorization { success in
             guard success else {
-                completion(0)
+                completion(cached)
                 return
             }
             HealthKitManager.shared.fetchTodaySteps { steps in
@@ -44,7 +46,7 @@ struct Provider: TimelineProvider {
             }
         }
     }
-}
+} // cierra Provider
 
 // MARK: - Entry
 // El modelo de datos del widget: una fecha y un número de pasos
@@ -62,14 +64,12 @@ struct PasosDiaWidgetEntryView: View {
     var body: some View {
         switch family {
         case .accessoryCircular:
-            // Pantalla de bloqueo — circular pequeño
             VStack(spacing: 2) {
                 Image(systemName: "figure.walk")
                 Text("\(Int(entry.steps))")
                     .font(.system(size: 14, weight: .bold, design: .rounded))
             }
         case .accessoryRectangular:
-            // Pantalla de bloqueo — rectangular
             HStack {
                 Image(systemName: "figure.walk")
                 VStack(alignment: .leading) {
@@ -80,7 +80,6 @@ struct PasosDiaWidgetEntryView: View {
                 }
             }
         default:
-            // Widget normal en pantalla de inicio
             VStack(spacing: 8) {
                 Image(systemName: "figure.walk")
                     .font(.system(size: 28))
@@ -94,7 +93,7 @@ struct PasosDiaWidgetEntryView: View {
             .containerBackground(.fill.tertiary, for: .widget)
         }
     }
-}
+} // cierra PasosDiaWidgetEntryView
 
 // MARK: - Widget Configuration
 struct StepsWidget: Widget {
@@ -113,4 +112,4 @@ struct StepsWidget: Widget {
             .accessoryRectangular
         ])
     }
-}
+} // cierra StepsWidget

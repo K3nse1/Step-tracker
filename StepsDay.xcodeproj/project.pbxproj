@@ -45,14 +45,14 @@
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
-		4C8AB1712F65606100A12695 /* Exceptions for "StepsWidget" folder in "StepsWidgetExtension" target */ = {
+		4C3CA59D2F657AF20042C325 /* Exceptions for "StepsWidget" folder in "StepsWidgetExtension" target */ = {
 			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
 			membershipExceptions = (
 				Info.plist,
 			);
 			target = 4C8AB15D2F65606000A12695 /* StepsWidgetExtension */;
 		};
-		4C8AB17D2F656C7B00A12695 /* Exceptions for "StepsDay" folder in "StepsWidgetExtension" target */ = {
+		4C8AB18C2F65768800A12695 /* Exceptions for "StepsDay" folder in "StepsWidgetExtension" target */ = {
 			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
 			membershipExceptions = (
 				HealthKitManager.swift,
@@ -65,7 +65,7 @@
 		4C8AB14E2F655FEA00A12695 /* StepsDay */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
 			exceptions = (
-				4C8AB17D2F656C7B00A12695 /* Exceptions for "StepsDay" folder in "StepsWidgetExtension" target */,
+				4C8AB18C2F65768800A12695 /* Exceptions for "StepsDay" folder in "StepsWidgetExtension" target */,
 			);
 			path = StepsDay;
 			sourceTree = "<group>";
@@ -73,7 +73,7 @@
 		4C8AB1642F65606000A12695 /* StepsWidget */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
 			exceptions = (
-				4C8AB1712F65606100A12695 /* Exceptions for "StepsWidget" folder in "StepsWidgetExtension" target */,
+				4C3CA59D2F657AF20042C325 /* Exceptions for "StepsWidget" folder in "StepsWidgetExtension" target */,
 			);
 			path = StepsWidget;
 			sourceTree = "<group>";
