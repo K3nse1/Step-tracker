@@ -10,7 +10,6 @@ import SwiftUI
 import HealthKit
 
 // MARK: - Timeline Provider
-// Le dice al sistema cuándo y con qué datos actualizar el widget
 struct Provider: TimelineProvider {
     
     func placeholder(in context: Context) -> StepsEntry {
@@ -33,33 +32,48 @@ struct Provider: TimelineProvider {
     }
     
     private func fetchSteps(completion: @escaping (Double) -> Void) {
+        // Leemos del App Group — la app principal es quien pide autorización
         let defaults = UserDefaults(suiteName: "group.com.rsantosg.stepsday")
         let cached = defaults?.double(forKey: "todaySteps") ?? 0
         print("🔵 Widget leyendo App Group: \(cached)")
         
-        HealthKitManager.shared.requestAuthorization { success in
-            print(success ? "🔵 Widget autorización OK" : "🔴 Widget sin autorización")
-            guard success else {
-                completion(cached)
-                return
-            }
-            HealthKitManager.shared.fetchTodaySteps { steps in
+        // Intentamos actualizar desde HealthKit directamente sin pedir autorización
+        let stepType = HKQuantityType(.stepCount)
+        let healthStore = HKHealthStore()
+        let startOfDay = Calendar.current.startOfDay(for: Date())
+        let predicate = HKQuery.predicateForSamples(
+            withStart: startOfDay,
+            end: Date(),
+            options: .strictStartDate
+        )
+        
+        let query = HKStatisticsQuery(
+            quantityType: stepType,
+            quantitySamplePredicate: predicate,
+            options: .cumulativeSum
+        ) { _, result, error in
+            if let steps = result?.sumQuantity()?.doubleValue(for: .count()) {
                 print("🔵 Widget pasos de HealthKit: \(steps)")
+                defaults?.set(steps, forKey: "todaySteps")
+                defaults?.synchronize()
                 completion(steps)
+            } else {
+                print("🔵 Widget usando caché: \(cached)")
+                completion(cached)
             }
         }
+        
+        healthStore.execute(query)
     }
 } // cierra Provider
 
 // MARK: - Entry
-// El modelo de datos del widget: una fecha y un número de pasos
 struct StepsEntry: TimelineEntry {
     let date: Date
     let steps: Double
 }
 
 // MARK: - Widget View
-// El diseño visual del widget
 struct PasosDiaWidgetEntryView: View {
     var entry: StepsEntry
     @Environment(\.widgetFamily) var family
@@ -72,6 +86,7 @@ struct PasosDiaWidgetEntryView: View {
                 Text("\(Int(entry.steps))")
                     .font(.system(size: 14, weight: .bold, design: .rounded))
             }
+            .containerBackground(.fill.tertiary, for: .widget)
         case .accessoryRectangular:
             HStack {
                 Image(systemName: "figure.walk")
@@ -82,6 +97,7 @@ struct PasosDiaWidgetEntryView: View {
                         .font(.system(size: 16, weight: .bold, design: .rounded))
                 }
             }
+            .containerBackground(.fill.tertiary, for: .widget)
         default:
             VStack(spacing: 8) {
                 Image(systemName: "figure.walk")
