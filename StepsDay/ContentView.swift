@@ -1,15 +1,10 @@
-//
-//  ContentView.swift
-//  StepsDay
-//
-//  Created by Raúl Santos Gutiérrez on 14/3/26.
-//
-
 import SwiftUI
 import WidgetKit
+import Combine
 
 struct ContentView: View {
     @State private var steps: Double = 0
+    let timer = Timer.publish(every: 60, on: .main, in: .common).autoconnect()
     
     var body: some View {
         VStack(spacing: 16) {
@@ -23,16 +18,22 @@ struct ContentView: View {
             
             Text("\(Int(steps))")
                 .font(.system(size: 64, weight: .bold, design: .rounded))
-            
         }
         .onAppear {
-            HealthKitManager.shared.requestAuthorization { success in
-                guard success else { return }
-                HealthKitManager.shared.fetchTodaySteps { count in
-                    DispatchQueue.main.async {
-                        steps = count
-                        WidgetCenter.shared.reloadAllTimelines()
-                    }
+            actualizarPasos()
+        }
+        .onReceive(timer) { _ in
+            actualizarPasos()
+        }
+    }
+    
+    func actualizarPasos() {
+        HealthKitManager.shared.requestAuthorization { success in
+            guard success else { return }
+            HealthKitManager.shared.fetchTodaySteps { count in
+                DispatchQueue.main.async {
+                    steps = count
+                    WidgetCenter.shared.reloadAllTimelines()
                 }
             }
         }
